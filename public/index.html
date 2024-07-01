@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Socket.IO Game Rooms</title>
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <h1>Socket.IO Game Rooms</h1>
+  <input type="text" placeholder="Enter Your Name" id="name" autocomplete="off">
+  <input type="text" id="roomId" placeholder="Enter Room ID">
+  <button id="join" onclick="joinRoom()">Join Room</button>
+  <button id="leave" onclick="leaveRoom()">Leave Room</button>
+  <input type="text" id="message" placeholder="Enter Message">
+  <button id="send" onclick="sendMessage()">Send Message</button>
+  <h2 id="welcome"></h2>
+  <div id="messages"></div>
+
+  <script>
+    const socket = io();
+
+    const name = document.getElementById('name')
+    const join = document.getElementById('join')
+    const leave = document.getElementById('leave')
+    const send = document.getElementById('send')
+    const messageDiv = document.getElementById('message')
+    const roomDiv = document.getElementById('roomId')
+    send.style.display = 'none'
+    messageDiv.style.display = 'none'
+    leave.style.display = 'none'
+    
+    function joinRoom() {
+      const roomId = roomDiv.value;
+      const username = name.value
+      socket.emit('joinRoom', {roomId: roomId, username : username});
+      roomDiv.innerHTML=''
+      send.style.display = 'inline'
+      messageDiv.style.display = 'inline'
+      leave.style.display = 'inline'
+      join.style.display = 'none'
+      roomDiv.style.display = 'none'
+      name.style.display = 'none'
+    }
+    
+    function leaveRoom() {
+      const roomId = roomDiv.value;
+      const username = name.value
+      socket.emit('leaveRoom', {roomId: roomId, username : username});
+      send.style.display = 'none'
+      messageDiv.style.display = 'none'
+      leave.style.display = 'none'
+      name.style.display = 'inline'
+      join.style.display = 'inline'
+      roomDiv.style.display = 'inline'
+    }
+
+    function sendMessage() {
+      const roomId = roomDiv.value;
+      const message = messageDiv.value;
+      const username = name.value
+      socket.emit('message', { roomId, message, username });
+      messageDiv.value = ''
+    }
+
+    socket.on('message', (data) => {
+      const messagesDiv = document.getElementById('messages');
+      const newMessage = document.createElement('div');
+      newMessage.textContent = `${data.userId}: ${data.message}`;
+      messagesDiv.appendChild(newMessage);
+    });
+
+    socket.on('welcomeuser',(data)=>{
+      const welcome = document.getElementById('welcome')
+      welcome.innerHTML = `Welcome ${data.user} to the room no. : ${data.roomId}`
+    })
+    
+    socket.on('joinuser',(data)=>{
+      console.log(roomId, data.roomId);
+      if (data.users>0 && roomDiv.value == data.roomId) {
+        const messagesDiv = document.getElementById('messages');
+        const newMessage = document.createElement('div');
+        newMessage.textContent = `User ${data.user} is joined the room ${data.roomId}`;
+        messagesDiv.appendChild(newMessage);
+      }
+    })
+
+    socket.on('leaveuser',(data)=>{
+      // const welcome = document.getElementById('welcome')
+      // welcome.innerHTML = `User ${data.user} left room ${data.roomId}`
+      if (data.users>0 && roomDiv.value == data.roomId) {
+        const messagesDiv = document.getElementById('messages');
+        const newMessage = document.createElement('div');
+        newMessage.textContent = `User ${data.user} is left the room ${data.roomId}`;
+        messagesDiv.appendChild(newMessage);
+      }
+    })
+  </script>
+</body>
+</html>
