@@ -3,17 +3,22 @@
 <head>
   <title>Socket.IO Game Rooms</title>
   <script src="/socket.io/socket.io.js"></script>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Socket.IO Chat Rooms</h1>
-  <input type="text" placeholder="Enter Your Name" id="name" autocomplete="off">
-  <input type="text" id="roomId" placeholder="Enter Room ID">
-  <button id="join" onclick="joinRoom()">Join Room</button>
-  <button id="leave" onclick="leaveRoom()">Leave Room</button>
-  <input type="text" id="message" placeholder="Enter Message">
-  <button id="send" onclick="sendMessage()">Send Message</button>
-  <h2 id="welcome"></h2>
-  <div id="messages"></div>
+  <div style="text-align: center;">
+    <h1 style="text-align: center;">Socket.IO Chat Rooms</h1>
+    <input style="text-align: center;" type="text" placeholder="Enter Your Name" id="name" autocomplete="off">
+    <input style="text-align: center;" type="text" id="roomId" placeholder="Enter Room ID">
+    <button style="text-align: center;" id="join" onclick="joinRoom()">Join Room</button>
+    <button id="leave" onclick="leaveRoom()">Leave Room</button>
+    <input type="text" id="message" placeholder="Enter Message">
+    <button id="send" onclick="sendMessage()">Send Message</button>
+    <div style="border: 2px solid black; min-height: 70vh; width: 70vw; margin: 30px auto; padding: 10px;">
+      <h2 id="welcome"></h2>
+      <div style="text-align: left;" id="messages"></div>
+    </div>
+  </div>
 
   <script>
     const socket = io();
